@@ -57,6 +57,16 @@ def _clean(s: str) -> str:
     return str(s).strip().lower().replace(" ", "_")
 
 
+def _popover_ctx(title: str, **kwargs):
+    """Compatibility wrapper: use st.popover if present, else fallback to st.expander.
+    Unknown kwargs for expander are ignored.
+    """
+    if hasattr(st, "popover"):
+        return st.popover(title, **kwargs)
+    # Drop unsupported kwargs for expander
+    return st.expander(title)
+
+
 def _make_week_date(df: pd.DataFrame, year_col: str, week_col: str) -> pd.DataFrame:
     out = df.copy()
 
@@ -335,7 +345,7 @@ if dat_ok:
                 "**Tips:** Use Endemic channel for stability; Mean+2SD for balance; 95th pct for early warnings."
             ),
         )
-        with st.popover("ℹ️ Baseline method explainer"):
+        with _popover_ctx("ℹ️ Baseline method explainer"):
             st.markdown(
                 """
                 **In plain language**
@@ -1291,7 +1301,7 @@ if dat_ok:
                 "• **95th percentile:** triggers only when above ~95% of history (stricter for small N)."
             ),
         )
-        with st.popover("ℹ️ Baseline method explainer", use_container_width=True):
+        with _popover_ctx("ℹ️ Baseline method explainer", use_container_width=True):
             st.markdown(
                 """
                 **Quick scenarios**
